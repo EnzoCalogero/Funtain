@@ -10,6 +10,8 @@ int echoPin;
 // defines variables
 long duration;
 int distance;
+int L_distance;
+int R_distance;
 
 //HC-SR04 B
 const int trigPinL = 13;
@@ -32,10 +34,15 @@ int en;
 int ina;
 int inb;
 
-//LED RGB
-const int red_light_pin= 11;
-const int green_light_pin = 0;
-const int blue_light_pin = 1;
+//LED RGB Right
+const int r_red_light_pin= 11;
+const int r_green_light_pin = 0;
+const int r_blue_light_pin = 1;
+
+//LED RGB Left
+const int l_red_light_pin= A2;
+const int l_green_light_pin = A3;
+const int l_blue_light_pin = A4;
 
 
 void setup()
@@ -52,68 +59,120 @@ void setup()
 //Set for HC04 Right
   pinMode(trigPinR, OUTPUT); // Sets the trigPin as an Output
   pinMode(echoPinR, INPUT); // Sets the echoPin as an Input
+ 
+  // for Debug 
   Serial.begin(9600); // Starts the serial communication
 
 //Set for HC04 Left
   pinMode(trigPinL, OUTPUT); // Sets the trigPin as an Output
   pinMode(echoPinL, INPUT); // Sets the echoPin as an Input
   
-// LED
+// LED Right
 
-  pinMode(red_light_pin, OUTPUT);
-  pinMode(green_light_pin, OUTPUT);
-  pinMode(blue_light_pin, OUTPUT);
+ pinMode(r_red_light_pin, OUTPUT);
+ pinMode(r_green_light_pin, OUTPUT);
+ pinMode(r_blue_light_pin, OUTPUT);
 
+// LED Left
+ pinMode(l_red_light_pin, OUTPUT);
+ pinMode(l_green_light_pin, OUTPUT);
+ pinMode(l_blue_light_pin, OUTPUT);
 }
 
 
-void RGB_color(int red_light_value, int green_light_value, int blue_light_value)
+void r_RGB_color(int red_light_value, int green_light_value, int blue_light_value)
  {
-  analogWrite(red_light_pin, red_light_value);
-  analogWrite(green_light_pin, green_light_value);
-  analogWrite(blue_light_pin, blue_light_value);
+  analogWrite(r_red_light_pin, red_light_value);
+  analogWrite(r_green_light_pin, green_light_value);
+  analogWrite(r_blue_light_pin, blue_light_value);
+}
+
+void l_RGB_color(int red_light_value, int green_light_value, int blue_light_value)
+ {
+  analogWrite(l_red_light_pin, red_light_value);
+  analogWrite(l_green_light_pin, green_light_value);
+  analogWrite(l_blue_light_pin, blue_light_value);
 }
 
 
-void check_color(void)
-{
-// put your main code here, to run repeatedly:
-  RGB_color(255, 0, 0); // Blue
-  delay(1000);
-  RGB_color(0, 255, 0); // Green
-  delay(1000);
-  RGB_color(0, 0, 255); // Red
-  delay(1000);  
-}
 
-void demoOne()
- 
+void OutPut(int R_distance, int L_distance)
 {
-  // This function will run the motors in both directions at a fixed speed
-  // Turn on motor A
- 
+// Right side  
+int R_pwm; // Pulse Width Modulation range 0~255
+  if (R_distance ==0) {
+                  R_pwm = 255;
+                  r_RGB_color(0, 0, 255);
+                  }
+ else if (R_distance == 1) {
+                  R_pwm = 200;
+                  r_RGB_color(255, 255, 0);
+                  }
+ else if (R_distance == 2)
+                  { 
+                  R_pwm = 150;
+                  r_RGB_color(0, 255, 0);
+                  }
+ else if (R_distance == 3)
+                  { 
+                  R_pwm = 100;
+                  r_RGB_color(255, 0, 0);
+                  }        
+ else {
+                  R_pwm = 0;
+                  r_RGB_color(0, 0, 0);
+}               
+
+// Left side  
+int L_pwm; // Pulse Width Modulation range 0~255
+  if (L_distance ==0) {
+                  L_pwm = 255;
+                  l_RGB_color(0, 0, 255);
+                  }
+ else if (L_distance == 1) {
+                  L_pwm = 200;
+                  l_RGB_color(255, 255, 0);
+                  }
+ else if (L_distance == 2)
+                  { 
+                  L_pwm = 150;
+                  l_RGB_color(0 , 250, 0);
+                  }
+ else if (L_distance == 3)
+                  { 
+                  L_pwm = 100;
+                  l_RGB_color(250 , 0, 0);
+                  }        
+ else {
+                  L_pwm = 0;
+                  l_RGB_color(0 , 0, 0);
+}               
+
+  //left side
   digitalWrite(in1, HIGH);
   digitalWrite(in2, LOW);
- 
-  // Set speed to 200 out of possible range 0~255
- 
-  analogWrite(enA, 100);
- 
-  // Turn on motor B
- 
+  
+  // left side
   digitalWrite(in3, HIGH);
   digitalWrite(in4, LOW);
  
   // Set speed to 200 out of possible range 0~255
  
-  analogWrite(enB, 100);
+  analogWrite(enA, R_pwm);
+  analogWrite(enB, L_pwm);
  
-  delay(2000);
+  Serial.println();
+  Serial.println(R_pwm);
+  Serial.println(L_pwm);
+  Serial.println();
+  // led settings
+
+  delay(1000);
  
   
   
   // Now turn off motors
- 
+ // to check....
   digitalWrite(in1, LOW);
   digitalWrite(in2, LOW);  
   digitalWrite(in3, LOW);
@@ -123,40 +182,12 @@ void demoOne()
  
 
 
-void engines(char flag, int distance)
-{
- if (flag =='R'){
-                  ina = in1;
-                  inb = in2;
-                  en = enA;
 
- }
-  Serial.println("sono nel enginers");
-  Serial.println(flag);
-  digitalWrite(in1, LOW);
-  digitalWrite(in2, HIGH);  
-  digitalWrite(in3, LOW);
-  digitalWrite(in4, HIGH); 
- 
-  // Accelerate from zero to maximum speed
- // modified max from 256 to 150
-  for (int i = 0; i < 250; i++)
- 
-  {
- 
-   analogWrite(enA, i);
-   analogWrite(enB, i);
- 
-    delay(20);
- 
-  } 
 
-  digitalWrite(in1, LOW);
-  digitalWrite(in2, LOW); 
-  digitalWrite(in3, LOW);
-  digitalWrite(in4, LOW);  
-}
- 
+
+
+
+
 int hc_04(char flag)
 {
   if (flag == 'R'){ //Right Sensor
@@ -179,9 +210,9 @@ duration = pulseIn(echoPin, HIGH);
 // Calculating the distance
 distance = duration*0.034/2;
 // Prints the distance on the Serial Monitor
- Serial.print("Distance: ");
- Serial.print(flag);
- Serial.println(distance);
+ //Serial.print("Distance: ");
+ //Serial.print(flag);
+ //Serial.println(distance);
  if (distance < 7) {
                   distance = 0;
                   }
@@ -199,20 +230,29 @@ distance = duration*0.034/2;
  else {
                   distance = 4;
 }                        
-Serial.println(distance);
+//Serial.println(distance);
 return distance;
 }
 
 
 void loop()
  {
+//r_check_color();   
+//l_check_color();
+
 //Check Right side...
-distance=hc_04('R');
-Serial.println("in loop");
-Serial.println(distance);
+R_distance = hc_04('R');
+//Serial.println("in loop");
+//Serial.println(distance);
+
+//engines('R',distance);
+
 //Check Left side
-distance=hc_04('L');
-Serial.println(distance);
-engines('R',2);
-delay(1000);
+L_distance = hc_04('L');
+OutPut( R_distance, L_distance);
+//Serial.println(distance);
+//engines('R',2);
+
+delay(100);
+
 }
