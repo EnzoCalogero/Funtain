@@ -61,7 +61,7 @@ void setup()
   pinMode(echoPinR, INPUT); // Sets the echoPin as an Input
  
   // for Debug 
- // Serial.begin(9600); // Starts the serial communication
+  Serial.begin(9600); // Starts the serial communication
 
 //Set for HC04 Left
   pinMode(trigPinL, OUTPUT); // Sets the trigPin as an Output
@@ -95,13 +95,14 @@ void l_RGB_color(int red_light_value, int green_light_value, int blue_light_valu
 }
 
 
+
 void OutPut(int R_distance, int L_distance)
 {
 // Right side  
 int R_pwm; // Pulse Width Modulation range 0~255
   if (R_distance ==0) {
                   R_pwm = 255;
-                  r_RGB_color(255, 0, 0);
+                  r_RGB_color(0, 0, 255);
                   }
  else if (R_distance == 1) {
                   R_pwm = 200;
@@ -115,7 +116,7 @@ int R_pwm; // Pulse Width Modulation range 0~255
  else if (R_distance == 3)
                   { 
                   R_pwm = 100;
-                  r_RGB_color(0, 0, 255);
+                  r_RGB_color(255, 0, 0);
                   }        
  else {
                   R_pwm = 0;
@@ -126,7 +127,7 @@ int R_pwm; // Pulse Width Modulation range 0~255
 int L_pwm; // Pulse Width Modulation range 0~255
   if (L_distance ==0) {
                   L_pwm = 255;
-                  l_RGB_color(255, 0, 0);
+                  l_RGB_color(0, 0, 255);
                   }
  else if (L_distance == 1) {
                   L_pwm = 200;
@@ -140,7 +141,7 @@ int L_pwm; // Pulse Width Modulation range 0~255
  else if (L_distance == 3)
                   { 
                   L_pwm = 100;
-                  l_RGB_color(0 , 0, 255);
+                  l_RGB_color(250 , 0, 0);
                   }        
  else {
                   L_pwm = 0;
@@ -160,23 +161,32 @@ int L_pwm; // Pulse Width Modulation range 0~255
   analogWrite(enA, R_pwm);
   analogWrite(enB, L_pwm);
  
-  //Serial.println();
-  //Serial.println(R_pwm);
-  //Serial.println(L_pwm);
-  //Serial.println();
+  Serial.println();
+  Serial.println(R_pwm);
+  Serial.println(L_pwm);
+  Serial.println();
   // led settings
 
-  //delay(100);
+  delay(1000);
  
   
   
   // Now turn off motors
  // to check....
- // digitalWrite(in1, LOW);
- // digitalWrite(in2, LOW);  
- // digitalWrite(in3, LOW);
- // digitalWrite(in4, LOW);
+  digitalWrite(in1, LOW);
+  digitalWrite(in2, LOW);  
+  digitalWrite(in3, LOW);
+  digitalWrite(in4, LOW);
+ 
 }
+ 
+
+
+
+
+
+
+
 
 int hc_04(char flag)
 {
@@ -239,10 +249,10 @@ R_distance = hc_04('R');
 
 //Check Left side
 L_distance = hc_04('L');
-OutPut(R_distance, L_distance);
+OutPut( R_distance, L_distance);
 //Serial.println(distance);
 //engines('R',2);
 
-//delay(100);
+delay(100);
 
 }
